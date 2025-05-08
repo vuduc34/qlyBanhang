@@ -1,6 +1,10 @@
 package project.psa.dataserver.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import project.psa.dataserver.common.constant;
 import project.psa.dataserver.entity.Khuyenmai;
@@ -9,7 +13,6 @@ import project.psa.dataserver.model.ResponMessage;
 import project.psa.dataserver.model.SanphamModel;
 import project.psa.dataserver.repository.KhuyenmaiRepository;
 import project.psa.dataserver.repository.SanphamRepository;
-
 import java.security.SecureRandom;
 
 @Service
@@ -18,11 +21,13 @@ public class SanphamService {
     private KhuyenmaiRepository khuyenmaiRepository;
     @Autowired
     private SanphamRepository sanphamRepository;
+    @Autowired
+    private LogService logService;
 
     private static final String CHARACTERS = "0123456789";
     private static final int LENGTH = 6;
     private static final SecureRandom random = new SecureRandom();
-
+    private static final ObjectMapper mapper = new ObjectMapper();
     public static String generateRandomString() {
         StringBuilder sb = new StringBuilder(LENGTH);
         sb.append("SP");
@@ -48,6 +53,7 @@ public class SanphamService {
             sanpham.setTensp(model.getTensp());
             sanpham.setStatus(model.getStatus());
             sanpham = sanphamRepository.save(sanpham);
+            logService.create(getCurrentUsername(),constant.HANHDONG.CREATE,constant.DOITUONG.SANPHAM,null,mapper.writeValueAsString(sanpham));
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
             responMessage.setData(sanpham);
@@ -159,6 +165,19 @@ public class SanphamService {
             responMessage.setResultCode(constant.RESULT_CODE.ERROR);
         }
         return responMessage;
+    }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else {
+                return principal.toString(); // Nếu không phải UserDetails thì lấy toString (ví dụ String username)
+            }
+        }
+        return null;
     }
 
 

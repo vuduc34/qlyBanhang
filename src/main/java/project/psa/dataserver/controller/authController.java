@@ -22,12 +22,12 @@ public class authController {
         return accountService.signIn(data);
     }
 
-//    @PostMapping("/signup")
-//    @ResponseBody
-//    public ResponMessage signup(@RequestBody signUpData dto,@RequestParam String rolename) throws Exception {
-//        return  accountService.createAccount(dto,rolename);
-//
-//    }
+    @PostMapping("/signup")
+    @ResponseBody
+    public ResponMessage signup(@RequestBody signUpData dto,@RequestParam String rolename) throws Exception {
+        return  accountService.createAccount(dto,rolename);
+
+    }
 
 
 }

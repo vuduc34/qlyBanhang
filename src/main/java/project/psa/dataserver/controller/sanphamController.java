@@ -28,24 +28,28 @@ public class sanphamController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage create(@RequestBody SanphamModel model) {
         return sanphamService.create(model);
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage update(@RequestBody SanphamModel model,@RequestParam String maSP) {
         return sanphamService.update(model,maSP);
     }
 
     @GetMapping("/addKhuyenmai")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage addKhuyenmai(@RequestParam String maSP,@RequestParam String maKM) {
         return sanphamService.addKhuyenmai(maSP,maKM);
     }
 
     @GetMapping("/removeKhuyenmai")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage removeKhuyenmai(@RequestParam String maSP) {
         return sanphamService.reomveKhuyenmai(maSP);

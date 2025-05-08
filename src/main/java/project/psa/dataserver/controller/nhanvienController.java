@@ -1,6 +1,7 @@
 package project.psa.dataserver.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import project.psa.dataserver.common.constant;
 import project.psa.dataserver.model.ResponMessage;
@@ -14,18 +15,21 @@ public class nhanvienController {
     private NhanvienService accountService;
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage signup(@RequestBody signUpData dto, @RequestParam String rolename) throws Exception {
         return  accountService.createAccount(dto,rolename);
     }
 
     @GetMapping("/findAll")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage findAll() throws Exception {
         return  accountService.findAll();
     }
 
     @GetMapping("/findAllRole")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage findAllRole() throws Exception {
         return  accountService.findAllRole();
@@ -38,6 +42,7 @@ public class nhanvienController {
     }
 
     @DeleteMapping("/deleteByMaNV")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponMessage delete( @RequestParam String maNV) throws Exception {
         return  accountService.deleteNhanvien(maNV);

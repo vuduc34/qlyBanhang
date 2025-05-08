@@ -6,6 +6,20 @@ public class constant {
         public static final String UN_AVAILABLE = "unavailable";
     }
 
+    public static final class HANHDONG {
+        public static final String CREATE = "CREATE";
+        public static final String UPDATE = "UPDATE";
+        public static final String DELETE = "DELETE";
+    }
+
+    public static final class DOITUONG {
+        public static final String NHANVIEN = "NHANVIEN";
+        public static final String SANPHAM = "SANPHAM";
+        public static final String HOADON = "HOADON";
+        public static final String KHACHHANG = "KHACHANG";
+        public static final String KHUYENMAI = "KHUYENMAI";
+    }
+
     public static final class SANPHAM_STATUS {
         public static final String AVAILABLE = "available";
         public static final String UN_AVAILABLE = "unavailable";
@@ -73,5 +87,6 @@ public class constant {
         public static final String STAFF = "ROLE_STAFF";
         public static final String ADMIN = "ROLE_ADMIN";
     }
+
 
 }
