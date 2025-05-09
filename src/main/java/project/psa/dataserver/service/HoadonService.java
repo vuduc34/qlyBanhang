@@ -1,5 +1,8 @@
 package project.psa.dataserver.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.psa.dataserver.common.constant;
@@ -8,7 +11,9 @@ import project.psa.dataserver.model.ResponMessage;
 import project.psa.dataserver.model.hoadonModel;
 import project.psa.dataserver.model.orderModel;
 import project.psa.dataserver.repository.*;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
@@ -25,6 +30,25 @@ public class HoadonService {
     private NhanvienRepository nhanvienRepository;
     @Autowired
     private SanphamRepository sanphamRepository;
+
+    @Autowired
+    private LogService logService;
+
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else {
+                return principal.toString(); // Nếu không phải UserDetails thì lấy toString (ví dụ String username)
+            }
+        }
+        return null;
+    }
 
     private static final Random random = new Random();
 
@@ -98,6 +122,8 @@ public class HoadonService {
                 hoadon = hoadonRepository.save(hoadon);
                 khachhang.setDoanhso(khachhang.getDoanhso().add(tonghoadon));
                 khachhangRepository.save(khachhang);
+                logService.create(getCurrentUsername(),constant.HANHDONG.CREATE,constant.DOITUONG.HOADON,
+                        null,mapper.writeValueAsString(hoadon));
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setData(hoadon);

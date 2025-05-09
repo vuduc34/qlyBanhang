@@ -10,6 +10,9 @@ public class constant {
         public static final String CREATE = "CREATE";
         public static final String UPDATE = "UPDATE";
         public static final String DELETE = "DELETE";
+        public static final String ADDKM = "ADD_KHUYENMAI";
+        public static final String REMOVEKM = "REMOVE_KHUYENMAI";
+        public static final String LOGIN = "LOGIN";
     }
 
     public static final class DOITUONG {

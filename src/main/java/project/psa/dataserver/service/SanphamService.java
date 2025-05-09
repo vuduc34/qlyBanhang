@@ -1,6 +1,8 @@
 package project.psa.dataserver.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +29,9 @@ public class SanphamService {
     private static final String CHARACTERS = "0123456789";
     private static final int LENGTH = 6;
     private static final SecureRandom random = new SecureRandom();
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     public static String generateRandomString() {
         StringBuilder sb = new StringBuilder(LENGTH);
         sb.append("SP");
@@ -73,12 +77,15 @@ public class SanphamService {
                 responMessage.setMessage("Không tìm thấy thông tin sản phẩm");
                 responMessage.setResultCode(constant.RESULT_CODE.ERROR);
             } else {
+                String currentSp = mapper.writeValueAsString(sanpham);
                 sanpham.setDvt(model.getDvt());
                 sanpham.setGia(model.getGia());
                 sanpham.setNuocsx(model.getNuocsx());
                 sanpham.setTensp(model.getTensp());
                 sanpham.setStatus(model.getStatus());
                 sanpham = sanphamRepository.save(sanpham);
+                String newSp = mapper.writeValueAsString(sanpham);
+                logService.create(getCurrentUsername(),constant.HANHDONG.UPDATE,constant.DOITUONG.SANPHAM,currentSp,newSp);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setData(sanpham);
@@ -122,6 +129,7 @@ public class SanphamService {
         ResponMessage responMessage = new ResponMessage();
         try {
             Sanpham sanpham = sanphamRepository.findSanphamById(maSP);
+            String currentSp = mapper.writeValueAsString(sanpham.getMakm());
             Khuyenmai khuyenmai = khuyenmaiRepository.findKhuyenmaiById(maKM);
             if(sanpham == null) {
                 responMessage.setMessage("Không tìm thấy thông tin sản phẩm");
@@ -135,6 +143,8 @@ public class SanphamService {
             } else {
                 sanpham.setMakm(khuyenmai);
                 sanpham = sanphamRepository.save(sanpham);
+                String newSp = mapper.writeValueAsString(sanpham.getMakm());
+                logService.create(getCurrentUsername(),constant.HANHDONG.ADDKM,constant.DOITUONG.SANPHAM,currentSp,newSp);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setData(sanpham);
@@ -150,12 +160,14 @@ public class SanphamService {
         ResponMessage responMessage = new ResponMessage();
         try {
             Sanpham sanpham = sanphamRepository.findSanphamById(maSP);
+            String currentSp = mapper.writeValueAsString(sanpham.getMakm());
             if(sanpham == null) {
                 responMessage.setMessage("Không tìm thấy thông tin sản phẩm");
                 responMessage.setResultCode(constant.RESULT_CODE.ERROR);
             } else {
                 sanpham.setMakm(null);
                 sanpham = sanphamRepository.save(sanpham);
+                logService.create(getCurrentUsername(),constant.HANHDONG.REMOVEKM,constant.DOITUONG.SANPHAM,currentSp,null);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setData(sanpham);

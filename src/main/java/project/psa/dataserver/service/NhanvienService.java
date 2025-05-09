@@ -1,6 +1,12 @@
 package project.psa.dataserver.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.psa.dataserver.common.constant;
@@ -27,6 +33,13 @@ public class NhanvienService {
     private RoleRepository roleRepository;
     @Autowired
     private jwtProvider jwtProvider;
+
+    @Autowired
+    private LogService logService;
+
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private static final String CHARACTERS = "0123456789";
     private static final int LENGTH = 6;
@@ -70,6 +83,7 @@ public class NhanvienService {
                 loginResponse.setPhoneNumber(account.getSodt());
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
+                logService.create(account.getId(),constant.HANHDONG.LOGIN,constant.DOITUONG.NHANVIEN,mapper.writeValueAsString(account),null);
                 responMessage.setData(loginResponse);
                 return responMessage;
             } catch (Exception e) {
@@ -103,6 +117,7 @@ public class NhanvienService {
                 account.setNgvl(Instant.now());
                 account.setStatus(constant.ACCOUNT_STATUS.ACTIVE);
                 account =  nhanvienRepository.save(account);
+                logService.create(getCurrentUsername(),constant.HANHDONG.CREATE,constant.DOITUONG.NHANVIEN,null,mapper.writeValueAsString(account));
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setData(account);
@@ -146,8 +161,12 @@ public class NhanvienService {
         ResponMessage responMessage = new ResponMessage();
         try {
             Nhanvien nhanvien = nhanvienRepository.findNhanvienById(nhanvienId);
-            nhanvien.setStatus(constant.ACCOUNT_STATUS.DELETED);
-            nhanvienRepository.save(nhanvien);
+            if(nhanvien != null) {
+                nhanvien.setStatus(constant.ACCOUNT_STATUS.DELETED);
+                nhanvienRepository.save(nhanvien);
+                logService.create(getCurrentUsername(),constant.HANHDONG.DELETE,constant.DOITUONG.NHANVIEN,nhanvienId,null);
+
+            }
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
         } catch (Exception e) {
@@ -168,6 +187,19 @@ public class NhanvienService {
             responMessage.setMessage(e.getMessage());
         }
         return responMessage;
+    }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else {
+                return principal.toString(); // Nếu không phải UserDetails thì lấy toString (ví dụ String username)
+            }
+        }
+        return null;
     }
 
 

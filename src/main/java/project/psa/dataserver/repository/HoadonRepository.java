@@ -16,4 +16,6 @@ public interface HoadonRepository extends JpaRepository<Hoadon, Integer> {
 
     @Query(value = "SELECT * FROM HOADON WHERE MAKH = :MAKH ORDER BY NGHD DESC", nativeQuery = true)
     List<Hoadon> findHoaDonByMaKH(@Param("MAKH") String MAKH);
+
+    Hoadon findHoadonById(Integer id);
 }
