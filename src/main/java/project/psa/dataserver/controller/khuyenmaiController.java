@@ -19,6 +19,12 @@ public class khuyenmaiController {
         return khuyenmaiService.findAll();
     }
 
+    @GetMapping("/findAvailable")
+    @ResponseBody
+    public ResponMessage findAvailable() {
+        return khuyenmaiService.findAvailable();
+    }
+
     @GetMapping("/findByMaKM")
     @ResponseBody
     public ResponMessage findByMaKH(@RequestParam String maKM) {

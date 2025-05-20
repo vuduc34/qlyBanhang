@@ -94,6 +94,19 @@ public class KhuyenmaiService {
         return responMessage;
     }
 
+    public ResponMessage findAvailable() {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            responMessage.setMessage(constant.MESSAGE.SUCCESS);
+            responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+            responMessage.setData(khuyenmaiRepository.findKhuyenmaiAvailable());
+        } catch (Exception  e) {
+            responMessage.setMessage(e.getMessage());
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+        }
+        return responMessage;
+    }
+
     public ResponMessage findAll() {
         ResponMessage responMessage = new ResponMessage();
         try {

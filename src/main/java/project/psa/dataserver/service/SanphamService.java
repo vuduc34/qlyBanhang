@@ -56,6 +56,7 @@ public class SanphamService {
             sanpham.setNuocsx(model.getNuocsx());
             sanpham.setTensp(model.getTensp());
             sanpham.setStatus(model.getStatus());
+            sanpham.setImageurl(model.getImageurl());
             sanpham = sanphamRepository.save(sanpham);
             logService.create(getCurrentUsername(),constant.HANHDONG.CREATE,constant.DOITUONG.SANPHAM,null,mapper.writeValueAsString(sanpham));
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
@@ -83,6 +84,7 @@ public class SanphamService {
                 sanpham.setNuocsx(model.getNuocsx());
                 sanpham.setTensp(model.getTensp());
                 sanpham.setStatus(model.getStatus());
+                sanpham.setImageurl(model.getImageurl());
                 sanpham = sanphamRepository.save(sanpham);
                 String newSp = mapper.writeValueAsString(sanpham);
                 logService.create(getCurrentUsername(),constant.HANHDONG.UPDATE,constant.DOITUONG.SANPHAM,currentSp,newSp);
@@ -129,7 +131,7 @@ public class SanphamService {
         ResponMessage responMessage = new ResponMessage();
         try {
             Sanpham sanpham = sanphamRepository.findSanphamById(maSP);
-            String currentSp = mapper.writeValueAsString(sanpham.getMakm());
+            String currentSp = mapper.writeValueAsString(sanpham);
             Khuyenmai khuyenmai = khuyenmaiRepository.findKhuyenmaiById(maKM);
             if(sanpham == null) {
                 responMessage.setMessage("Không tìm thấy thông tin sản phẩm");
@@ -143,7 +145,7 @@ public class SanphamService {
             } else {
                 sanpham.setMakm(khuyenmai);
                 sanpham = sanphamRepository.save(sanpham);
-                String newSp = mapper.writeValueAsString(sanpham.getMakm());
+                String newSp = mapper.writeValueAsString(sanpham);
                 logService.create(getCurrentUsername(),constant.HANHDONG.ADDKM,constant.DOITUONG.SANPHAM,currentSp,newSp);
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
@@ -160,14 +162,14 @@ public class SanphamService {
         ResponMessage responMessage = new ResponMessage();
         try {
             Sanpham sanpham = sanphamRepository.findSanphamById(maSP);
-            String currentSp = mapper.writeValueAsString(sanpham.getMakm());
+            String currentSp = mapper.writeValueAsString(sanpham);
             if(sanpham == null) {
                 responMessage.setMessage("Không tìm thấy thông tin sản phẩm");
                 responMessage.setResultCode(constant.RESULT_CODE.ERROR);
             } else {
                 sanpham.setMakm(null);
                 sanpham = sanphamRepository.save(sanpham);
-                logService.create(getCurrentUsername(),constant.HANHDONG.REMOVEKM,constant.DOITUONG.SANPHAM,currentSp,null);
+                logService.create(getCurrentUsername(),constant.HANHDONG.REMOVEKM,constant.DOITUONG.SANPHAM,currentSp,mapper.writeValueAsString(sanpham));
                 responMessage.setMessage(constant.MESSAGE.SUCCESS);
                 responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
                 responMessage.setData(sanpham);

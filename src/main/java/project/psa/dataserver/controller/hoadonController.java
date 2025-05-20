@@ -30,4 +30,10 @@ public class hoadonController {
     public ResponMessage findByMaKH(@RequestParam String maKH) {
         return hoadonService.findByMaKH(maKH);
     }
+
+    @GetMapping("/findByMaHD")
+    @ResponseBody
+    public ResponMessage findByMaHD(@RequestParam Integer maHD) {
+        return hoadonService.findByHD(maHD);
+    }
 }

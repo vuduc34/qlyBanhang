@@ -6,6 +6,7 @@ public class constant {
         public static final String UN_AVAILABLE = "unavailable";
     }
 
+//    LOG
     public static final class HANHDONG {
         public static final String CREATE = "CREATE";
         public static final String UPDATE = "UPDATE";
@@ -15,6 +16,7 @@ public class constant {
         public static final String LOGIN = "LOGIN";
     }
 
+//    LOG
     public static final class DOITUONG {
         public static final String NHANVIEN = "NHANVIEN";
         public static final String SANPHAM = "SANPHAM";
@@ -27,6 +29,7 @@ public class constant {
         public static final String AVAILABLE = "available";
         public static final String UN_AVAILABLE = "unavailable";
     }
+//    Trạng thái của tài khoản nhân viên
     public static final class ACCOUNT_STATUS {
         public static  final String ACTIVE = "active";
         public static  final String DELETED = "deleted";

@@ -72,6 +72,12 @@ public class HoadonService {
             } else if(nhanvien == null) {
                 responMessage.setMessage("Không tìm thấy thông tin nhân viên");
                 responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+            } else if(!(nhanvien.getStatus().equals(constant.ACCOUNT_STATUS.ACTIVE))) {
+                responMessage.setMessage("Nhân viên không ở trạng thái hợp lệ");
+                responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+            }else if(!(khachhang.getStatus().equals(constant.ACCOUNT_STATUS.ACTIVE))) {
+                responMessage.setMessage("Khách hàng không ở trạng thái hợp lệ");
+                responMessage.setResultCode(constant.RESULT_CODE.ERROR);
             } else if(!validSP) {
                 responMessage.setMessage("Sản phẩm không khả dụng");
                 responMessage.setResultCode(constant.RESULT_CODE.ERROR);
@@ -155,6 +161,19 @@ public class HoadonService {
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
             responMessage.setData(hoadonRepository.findHoaDonByMaKH(maKH));
+        } catch (Exception  e) {
+            responMessage.setMessage(e.getMessage());
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+        }
+        return responMessage;
+    }
+
+    public ResponMessage findByHD(Integer maHD) {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            responMessage.setMessage(constant.MESSAGE.SUCCESS);
+            responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+            responMessage.setData(hoadonRepository.findHoadonById(maHD));
         } catch (Exception  e) {
             responMessage.setMessage(e.getMessage());
             responMessage.setResultCode(constant.RESULT_CODE.ERROR);

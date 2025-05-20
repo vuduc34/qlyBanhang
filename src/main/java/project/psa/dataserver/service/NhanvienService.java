@@ -13,10 +13,7 @@ import project.psa.dataserver.common.constant;
 import project.psa.dataserver.config.jwt.jwtProvider;
 import project.psa.dataserver.entity.Nhanvien;
 import project.psa.dataserver.entity.Role;
-import project.psa.dataserver.model.ResponMessage;
-import project.psa.dataserver.model.SignInData;
-import project.psa.dataserver.model.loginResponse;
-import project.psa.dataserver.model.signUpData;
+import project.psa.dataserver.model.*;
 import project.psa.dataserver.repository.NhanvienRepository;
 import project.psa.dataserver.repository.RoleRepository;
 
@@ -131,10 +128,58 @@ public class NhanvienService {
 
     }
 
+    public ResponMessage updateNhanvien(String nhanvienId,String ten, String sdt) {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            Nhanvien nhanvien = nhanvienRepository.findNhanvienById(nhanvienId);
+            if(nhanvien == null) {
+                responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+                responMessage.setMessage("Không tìm thấy thông tin nhân viên");
+            } else {
+                String current = mapper.writeValueAsString(nhanvien);
+                nhanvien.setHoten(ten);
+                nhanvien.setSodt(sdt);
+                nhanvien = nhanvienRepository.save(nhanvien);
+                responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+                responMessage.setMessage(constant.MESSAGE.SUCCESS);
+                responMessage.setData(nhanvien);
+                logService.create(getCurrentUsername(),constant.HANHDONG.UPDATE,constant.DOITUONG.NHANVIEN,current,mapper.writeValueAsString(nhanvien));
+            }
+        } catch (Exception e) {
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+            responMessage.setMessage(e.getMessage());
+        }
+        return responMessage;
+    }
+
+    public ResponMessage changePassword(changePassword model) {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            Nhanvien nhanvien = nhanvienRepository.findNhanvienById(model.getMaNV());
+            if(nhanvien == null) {
+                responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+                responMessage.setMessage("Không tìm thấy thông tin nhân viên");
+            } else if(!passwordEncoder.matches(model.getCurrentPassword(), nhanvien.getPassword())) {
+                responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+                responMessage.setMessage("Mật khẩu hiện tại không đúng");
+            } else {
+                nhanvien.setPassword(passwordEncoder.encode(model.getNewPassword()));
+                nhanvien = nhanvienRepository.save(nhanvien);
+                responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+                responMessage.setMessage(constant.MESSAGE.SUCCESS);
+                responMessage.setData(nhanvien);
+            }
+        } catch (Exception e) {
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+            responMessage.setMessage(e.getMessage());
+        }
+        return responMessage;
+    }
+
     public ResponMessage findAll() {
         ResponMessage responMessage = new ResponMessage();
         try {
-            responMessage.setData(nhanvienRepository.findAllNhanvien());
+            responMessage.setData(nhanvienRepository.findAll());
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
         } catch (Exception e) {
@@ -144,6 +189,22 @@ public class NhanvienService {
         }
         return responMessage;
     }
+
+    public ResponMessage findByStatus(String status) {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            responMessage.setData(nhanvienRepository.findNhanvienByStatus(status));
+            responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+            responMessage.setMessage(constant.MESSAGE.SUCCESS);
+        } catch (Exception e) {
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+            responMessage.setMessage(e.getMessage());
+            System.out.println(e.getMessage());
+        }
+        return responMessage;
+    }
+
+
 
     public ResponMessage findAllRole() {
         ResponMessage responMessage = new ResponMessage();
@@ -163,12 +224,12 @@ public class NhanvienService {
             Nhanvien nhanvien = nhanvienRepository.findNhanvienById(nhanvienId);
             if(nhanvien != null) {
                 nhanvien.setStatus(constant.ACCOUNT_STATUS.DELETED);
-                nhanvienRepository.save(nhanvien);
+                nhanvien = nhanvienRepository.save(nhanvien);
                 logService.create(getCurrentUsername(),constant.HANHDONG.DELETE,constant.DOITUONG.NHANVIEN,nhanvienId,null);
-
             }
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
+            responMessage.setData(nhanvien);
         } catch (Exception e) {
             responMessage.setResultCode(constant.RESULT_CODE.ERROR);
             responMessage.setMessage(e.getMessage());

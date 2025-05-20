@@ -1,18 +1,18 @@
 package project.psa.dataserver.model;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
-public class SanphamModel {
+public class SanPhamThongKeDTO {
+    private String masp;
     private String tensp;
     private String dvt;
     private String nuocsx;
-    private BigDecimal gia;
+    private Double gia;
+    private String makm;
     private String status;
-    private String imageurl;
+    private Integer tongSoLuongBan;
+    private String imageUrl;
 }

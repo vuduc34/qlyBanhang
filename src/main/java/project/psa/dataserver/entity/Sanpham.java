@@ -39,4 +39,7 @@ public class Sanpham {
     @Column(name = "STATUS", length = 40)
     private String status;
 
+    @Column(name = "IMAGEURL", length = 100)
+    private String imageurl;
+
 }

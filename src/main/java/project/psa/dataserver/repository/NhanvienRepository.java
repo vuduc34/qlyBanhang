@@ -10,9 +10,17 @@ import java.util.List;
 
 @Repository
 public interface NhanvienRepository extends JpaRepository<Nhanvien, String> {
-    @Query(value = "SELECT * FROM NHANVIEN WHERE MANV = :id and STATUS = 'active'", nativeQuery = true)
+    @Query(value = "SELECT * FROM NHANVIEN WHERE MANV = :id ", nativeQuery = true)
     Nhanvien findNhanvienById(@Param("id") String id);
     boolean existsById(String id);
     @Query(value = "SELECT * FROM NHANVIEN WHERE STATUS = 'active'", nativeQuery = true)
     List<Nhanvien> findAllNhanvien();
+
+    List<Nhanvien> findNhanvienByStatus(String status);
+
+    @Query(value = "SELECT count(*) FROM NHANVIEN ", nativeQuery = true)
+    int countNhanvien();
+
+    @Query(value = "SELECT count(*) FROM NHANVIEN WHERE STATUS = 'active' ", nativeQuery = true)
+    int countNhanvienActive();
 }

@@ -18,6 +18,18 @@ public class khachhangController {
         return khachhangService.findAll();
     }
 
+    @GetMapping("/findKhachHangActive")
+    @ResponseBody
+    public ResponMessage findKhachHangActive() {
+        return khachhangService.findByStatus(constant.ACCOUNT_STATUS.ACTIVE);
+    }
+
+    @GetMapping("/findKhachHangDeleted")
+    @ResponseBody
+    public ResponMessage findKhachHangDeleted() {
+        return khachhangService.findByStatus(constant.ACCOUNT_STATUS.DELETED);
+    }
+
     @GetMapping("/findByMaKH")
     @ResponseBody
     public ResponMessage findByMaKH(@RequestParam String maKH) {

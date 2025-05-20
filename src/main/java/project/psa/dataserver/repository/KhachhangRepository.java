@@ -10,11 +10,19 @@ import java.util.List;
 
 @Repository
 public interface KhachhangRepository extends JpaRepository<Khachhang, String> {
-    @Query(value = "SELECT * FROM KHACHHANG WHERE MAKH = :id and STATUS = 'active'", nativeQuery = true)
+    @Query(value = "SELECT * FROM KHACHHANG WHERE MAKH = :id ", nativeQuery = true)
     Khachhang findKhachhangById(@Param("id") String id);
 
     @Query(value = "SELECT * FROM KHACHHANG WHERE  STATUS = 'active'", nativeQuery = true)
     List<Khachhang> findAllKhachhang();
 
     boolean existsById(String id);
+
+    List<Khachhang> findKhachhangByStatus(String status);
+
+    @Query(value = "SELECT COUNT(*) FROM KHACHHANG  ", nativeQuery = true)
+    int countKhachHang();
+
+    @Query(value = "SELECT COUNT(*) FROM KHACHHANG WHERE STATUS = 'active' ", nativeQuery = true)
+    int countKhachHangActive();
 }

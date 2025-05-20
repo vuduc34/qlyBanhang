@@ -128,12 +128,25 @@ public class KhachhangService {
         return responMessage;
     }
 
+    public ResponMessage findByStatus(String status) {
+        ResponMessage responMessage = new ResponMessage();
+        try {
+            responMessage.setMessage(constant.MESSAGE.SUCCESS);
+            responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
+            responMessage.setData(khachhangRepository.findKhachhangByStatus(status));
+        } catch (Exception  e) {
+            responMessage.setMessage(e.getMessage());
+            responMessage.setResultCode(constant.RESULT_CODE.ERROR);
+        }
+        return responMessage;
+    }
+
     public ResponMessage findAll() {
         ResponMessage responMessage = new ResponMessage();
         try {
             responMessage.setMessage(constant.MESSAGE.SUCCESS);
             responMessage.setResultCode(constant.RESULT_CODE.SUCCESS);
-            responMessage.setData(khachhangRepository.findAllKhachhang());
+            responMessage.setData(khachhangRepository.findAll());
         } catch (Exception  e) {
             responMessage.setMessage(e.getMessage());
             responMessage.setResultCode(constant.RESULT_CODE.ERROR);
